@@ -43,12 +43,18 @@ IFS=$'\n'
             #echo `date +"%l:%M:%S %p"`  "$i pac not set!"
             if [[ "$i" =~ 'Wi-Fi' ]] ; then
                 ssid=`/usr/sbin/networksetup -getairportnetwork en0 | cut -c 24-`
+                #set dns
+                /usr/sbin/networksetup -setdnsservers $i "127.0.0.1"
                 case "$ssid" in
                     15wxap) autoProxyURL='http://192.168.3.99/in.pac' ;;
                     508) autoProxyURL='http://192.168.3.99/in.pac' ;;
                     dd-wrt) autoProxyURL='http://192.168.3.99/in.pac' ;;
-                    TheUnitedNations) autoProxyURL='http://10.20.30.40/in.pac' ;;
-                    TheUnitedNationZ) autoProxyURL='http://10.20.30.40/in.pac' ;;
+                    TheUnitedNations) 
+                        /usr/sbin/networksetup -setdnsservers $i "Empty"
+                        autoProxyURL='http://10.20.30.40/in.pac' ;;
+                    TheUnitedNationZ) 
+                        /usr/sbin/networksetup -setdnsservers $i "Empty"
+                        autoProxyURL='http://10.20.30.40/in.pac' ;;
                     *) autoProxyURL='http://ddns.nznd.org:8123/out.pac' ;;
                 esac
                 autoProxyURLLocal=`/usr/sbin/networksetup -getautoproxyurl "$i" | head -1 | cut -c 6-`
@@ -76,47 +82,49 @@ IFS=$'\n'
             fi
         else
             #echo `date +"%l:%M:%S %p"`  "$i pac is $PacUrl"
-            if [[ $PacUrl =~ $lanternPac ]]; then
-                if [[ "$i" =~ 'Wi-Fi' ]] ; then
-                    ssid=`/usr/sbin/networksetup -getairportnetwork en0 | cut -c 24-`
-                    case "$ssid" in
-                        15wxap) autoProxyURL='http://192.168.3.99/in.pac' ;;
-                        508) autoProxyURL='http://192.168.3.99/in.pac' ;;
-                        dd-wrt) autoProxyURL='http://192.168.3.99/in.pac' ;;
-                        TheUnitedNations) autoProxyURL='http://10.20.30.40/in.pac' ;;
-                        TheUnitedNationZ) autoProxyURL='http://10.20.30.40/in.pac' ;;
-                        *) autoProxyURL='http://ddns.nznd.org:8123/out.pac' ;;
-                    esac
-                    autoProxyURLLocal=`/usr/sbin/networksetup -getautoproxyurl "$i" | head -1 | cut -c 6-`
-                    autoProxyIP=`echo `date +"%l:%M:%S %p"`  "$autoProxyURL" | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}"`
-                    if [[ -z $autoProxyIP ]] ; then
-                        autoProxyIP=`nslookup ddns.nznd.org | grep "Address: " | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}"`
-                        autoProxyURLLocal=$autoProxyIP
-                    fi
-                    echo `date +"%l:%M:%S %p"`  "$i Proxy IP is $autoProxyIP"
-                
-                    # echo 's the name of any matching services & the autoproxyURL's set
-                    echo `date +"%l:%M:%S %p"`  "$i Proxy set to $autoProxyURLLocal"
-                
-                    # If the value returned of $autoProxyURLLocal does not match the value of $autoProxyURL for the interface $i, change it.
-                    if [[ $autoProxyURLLocal != $autoProxyURL ]]; then
-                        /usr/sbin/networksetup -setautoproxyurl $i $autoProxyURL
-                        echo `date +"%l:%M:%S %p"`  "Set auto proxy for $i to $autoProxyURL"
-                        sed -i '' "12s/.*/${autoProxyIP}   self-proxy/g" /private/etc/hosts
-                        echo `date +"%l:%M:%S %p"`  "Edit private hosts to $autoProxyIP"
-                    fi
+            if [[ "$i" =~ 'Wi-Fi' ]] ; then
+                ssid=`/usr/sbin/networksetup -getairportnetwork en0 | cut -c 24-`
+                case "$ssid" in
+                    15wxap) autoProxyURL='http://192.168.3.99/in.pac' ;;
+                    508) autoProxyURL='http://192.168.3.99/in.pac' ;;
+                    dd-wrt) autoProxyURL='http://192.168.3.99/in.pac' ;;
+                    TheUnitedNations) 
+                        /usr/sbin/networksetup -setdnsservers $i "Empty"
+                        autoProxyURL='http://10.20.30.40/in.pac' ;;
+                    TheUnitedNationZ) 
+                        /usr/sbin/networksetup -setdnsservers $i "Empty"
+                        autoProxyURL='http://10.20.30.40/in.pac' ;;
+                    *) autoProxyURL='http://ddns.nznd.org:8123/out.pac' ;;
+                esac
+                autoProxyURLLocal=`/usr/sbin/networksetup -getautoproxyurl "$i" | head -1 | cut -c 6-`
+                autoProxyIP=`echo "$autoProxyURL" | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}"`
+                if [[ -z $autoProxyIP ]] ; then
+                    autoProxyIP=`nslookup ddns.nznd.org | grep "Address: " | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}"`
+                    autoProxyURLLocal=$autoProxyIP
+                fi
+                echo `date +"%l:%M:%S %p"`  "$i Proxy IP is $autoProxyIP"
 
-                    # Enable auto proxy once set
-                    /usr/sbin/networksetup -setautoproxystate "$i" on
-                    echo `date +"%l:%M:%S %p"`  "Turned on auto proxy for $i" 
-                else
+                # echo 's the name of any matching services & the autoproxyURL's set
+                echo `date +"%l:%M:%S %p"`  "$i Proxy set to $autoProxyURLLocal"
+
+                # If the value returned of $autoProxyURLLocal does not match the value of $autoProxyURL for the interface $i, change it.
+                if [[ $autoProxyURLLocal != $autoProxyURL ]]; then
+                    /usr/sbin/networksetup -setautoproxyurl $i $autoProxyURL
+                    echo `date +"%l:%M:%S %p"`  "Set auto proxy for $i to $autoProxyURL"
+                    sed -i '' "12s/.*/${autoProxyIP}   self-proxy/g" /private/etc/hosts
+                    echo `date +"%l:%M:%S %p"`  "Edit private hosts to $autoProxyIP"
+                fi
+
+                # Enable auto proxy once set
+                /usr/sbin/networksetup -setautoproxystate "$i" on
+                echo `date +"%l:%M:%S %p"`  "Turned on auto proxy for $i" 
+            else
+                if [[ $PacUrl =~ $lanternPac ]]; then
                     /usr/sbin/networksetup -setautoproxystate "$i" off
                     echo `date +"%l:%M:%S %p"`  "Turned off auto proxy for $i" 
                 fi
             fi
         fi
-		
-	
 	done
 
 unset IFS
