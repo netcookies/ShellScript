@@ -46,16 +46,36 @@ IFS=$'\n'
                 #set dns
                 /usr/sbin/networksetup -setdnsservers $i "127.0.0.1"
                 case "$ssid" in
-                    15wxap) autoProxyURL='http://192.168.3.99/in.pac' ;;
-                    508) autoProxyURL='http://192.168.3.99/in.pac' ;;
-                    dd-wrt) autoProxyURL='http://192.168.3.99/in.pac' ;;
+                    15wxap) 
+                        /usr/sbin/networksetup -setdnsservers $i "192.168.3.99"
+                        autoProxyURL='http://192.168.3.99/in.pac' ;;
+                    508) 
+                        /usr/sbin/networksetup -setdnsservers $i "192.168.3.99"
+                        autoProxyURL='http://192.168.3.99/in.pac' ;;
+                    dd-wrt) 
+                        /usr/sbin/networksetup -setdnsservers $i "192.168.3.99"
+                        autoProxyURL='http://192.168.3.99/in.pac' ;;
                     TheUnitedNations) 
                         /usr/sbin/networksetup -setdnsservers $i "Empty"
                         autoProxyURL='http://10.20.30.40/in.pac' ;;
-                    TheUnitedNationZ) 
+                    TheUnitedNations5g) 
                         /usr/sbin/networksetup -setdnsservers $i "Empty"
                         autoProxyURL='http://10.20.30.40/in.pac' ;;
-                    *) autoProxyURL='http://ddns.nznd.org:8123/out.pac' ;;
+                    xnai) 
+                        /usr/sbin/networksetup -setdnsservers $i "127.0.0.1"
+                        autoProxyURL='http://127.0.0.1:8070/proxy.pac' ;;
+                    "Isulew's Iphone") 
+                        /usr/sbin/networksetup -setdnsservers $i "127.0.0.1"
+                        autoProxyURL='http://127.0.0.1:8070/proxy.pac' ;;
+                    FAST_FF7E) 
+                        /usr/sbin/networksetup -setdnsservers $i "127.0.0.1"
+                        autoProxyURL='http://127.0.0.1:8070/proxy.pac' ;;
+                    Guest) 
+                        /usr/sbin/networksetup -setdnsservers $i "127.0.0.1"
+                        autoProxyURL='http://ddns.nznd.org:8800/out.pac' ;;
+                    *) 
+                        /usr/sbin/networksetup -setdnsservers $i "127.0.0.1"
+                        autoProxyURL='http://127.0.0.1:8070/proxy.pac' ;;
                 esac
                 autoProxyURLLocal=`/usr/sbin/networksetup -getautoproxyurl "$i" | head -1 | cut -c 6-`
                 autoProxyIP=`echo "$autoProxyURL" | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}"`
@@ -84,17 +104,38 @@ IFS=$'\n'
             #echo `date +"%l:%M:%S %p"`  "$i pac is $PacUrl"
             if [[ "$i" =~ 'Wi-Fi' ]] ; then
                 ssid=`/usr/sbin/networksetup -getairportnetwork en0 | cut -c 24-`
+                /usr/sbin/networksetup -setdnsservers $i "127.0.0.1"
                 case "$ssid" in
-                    15wxap) autoProxyURL='http://192.168.3.99/in.pac' ;;
-                    508) autoProxyURL='http://192.168.3.99/in.pac' ;;
-                    dd-wrt) autoProxyURL='http://192.168.3.99/in.pac' ;;
+                    15wxap) 
+                        /usr/sbin/networksetup -setdnsservers $i "192.168.3.99"
+                        autoProxyURL='http://192.168.3.99/in.pac' ;;
+                    508) 
+                        /usr/sbin/networksetup -setdnsservers $i "192.168.3.99"
+                        autoProxyURL='http://192.168.3.99/in.pac' ;;
+                    dd-wrt) 
+                        /usr/sbin/networksetup -setdnsservers $i "192.168.3.99"
+                        autoProxyURL='http://192.168.3.99/in.pac' ;;
                     TheUnitedNations) 
                         /usr/sbin/networksetup -setdnsservers $i "Empty"
                         autoProxyURL='http://10.20.30.40/in.pac' ;;
-                    TheUnitedNationZ) 
+                    TheUnitedNations5g) 
                         /usr/sbin/networksetup -setdnsservers $i "Empty"
                         autoProxyURL='http://10.20.30.40/in.pac' ;;
-                    *) autoProxyURL='http://ddns.nznd.org:8123/out.pac' ;;
+                    xnai) 
+                        /usr/sbin/networksetup -setdnsservers $i "127.0.0.1"
+                        autoProxyURL='http://127.0.0.1:8070/proxy.pac' ;;
+                    "Isulew's Iphone") 
+                        /usr/sbin/networksetup -setdnsservers $i "127.0.0.1"
+                        autoProxyURL='http://127.0.0.1:8070/proxy.pac' ;;
+                    FAST_FF7E) 
+                        /usr/sbin/networksetup -setdnsservers $i "127.0.0.1"
+                        autoProxyURL='http://127.0.0.1:8070/proxy.pac' ;;
+                    Guest) 
+                        /usr/sbin/networksetup -setdnsservers $i "127.0.0.1"
+                        autoProxyURL='http://ddns.nznd.org:8800/out.pac' ;;
+                    *) 
+                        /usr/sbin/networksetup -setdnsservers $i "127.0.0.1"
+                        autoProxyURL='http://127.0.0.1:8070/proxy.pac' ;;
                 esac
                 autoProxyURLLocal=`/usr/sbin/networksetup -getautoproxyurl "$i" | head -1 | cut -c 6-`
                 autoProxyIP=`echo "$autoProxyURL" | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}"`
